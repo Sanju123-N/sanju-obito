@@ -148,7 +148,7 @@ let allCustomers = [];
 
 async function loadCustomers() {
   try {
-    const res = await fetch('http://localhost:4000/api/customers');
+    const res = await fetch('http://localhost:5000/api/customers');
     const data = await res.json();
     allCustomers = data.data || [];
     renderTable(allCustomers);
