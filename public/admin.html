@@ -148,14 +148,14 @@ let allCustomers = [];
 
 async function loadCustomers() {
   try {
-    const res = await fetch('http://localhost:5000/api/customers');
+    const res = await fetch("https://sanjuobito.onrender.com/api/customers");
     const data = await res.json();
     allCustomers = data.data || [];
     renderTable(allCustomers);
     updateStats(allCustomers);
   } catch {
     document.getElementById('customerTable').innerHTML =
-      '<tr><td colspan="9" class="empty">❌ Server connect ஆகவில்லை! server.js run பண்ணுங்கள்.</td></tr>';
+      '<tr><td colspan="9" class="empty">❌ Server connect ஆகவில்லை!</td></tr>';
   }
 }
 
