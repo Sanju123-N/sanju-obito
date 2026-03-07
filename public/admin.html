@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - Natarajan Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: #050a14;
+      font-family: 'Exo 2', sans-serif;
+      color: #e0f4ff;
+      padding: 20px;
+    }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 16px 24px;
+      background: #0d1a2e;
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 14px;
+      margin-bottom: 24px;
+    }
+    .logo {
+      font-family:'Rajdhani',sans-serif;
+      font-size:1.4rem; font-weight:700; color:#00e5ff;
+    }
+    .logo span { color:#ff6b35; }
+    .stats {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:16px; margin-bottom:24px;
+    }
+    .stat-card {
+      background:#0d1a2e;
+      border:1px solid rgba(0,229,255,0.15);
+      border-radius:12px; padding:20px;
+      text-align:center;
+    }
+    .stat-num {
+      font-family:'Rajdhani',sans-serif;
+      font-size:2rem; font-weight:700; color:#00e5ff;
+    }
+    .stat-label { color:#7ba8c4; font-size:0.85rem; margin-top:4px; }
+    .toolbar {
+      display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap;
+    }
+    .btn {
+      padding:10px 20px; border-radius:8px; border:none;
+      font-family:'Exo 2',sans-serif; font-weight:700;
+      cursor:pointer; font-size:0.9rem; transition:all 0.2s;
+    }
+    .btn-primary { background:#00e5ff; color:#050a14; }
+    .btn-primary:hover { box-shadow:0 0 16px rgba(0,229,255,0.4); }
+    .btn-danger { background:rgba(255,50,50,0.15); color:#ff5050; border:1px solid rgba(255,50,50,0.3); }
+    .search-box {
+      flex:1; min-width:200px;
+      background:#0d1a2e; border:1px solid rgba(0,229,255,0.2);
+      border-radius:8px; padding:10px 16px;
+      color:#e0f4ff; font-family:'Exo 2',sans-serif; font-size:0.9rem;
+      outline:none;
+    }
+    .table-wrap {
+      background:#0d1a2e;
+      border:1px solid rgba(0,229,255,0.15);
+      border-radius:14px; overflow:auto;
+    }
+    table { width:100%; border-collapse:collapse; }
+    thead { background: rgba(0,229,255,0.08); }
+    th {
+      padding:14px 16px; text-align:left;
+      color:#00e5ff; font-size:0.8rem;
+      letter-spacing:1px; text-transform:uppercase;
+      border-bottom:1px solid rgba(0,229,255,0.1);
+    }
+    td {
+      padding:14px 16px;
+      border-bottom:1px solid rgba(0,229,255,0.06);
+      font-size:0.9rem; color:#e0f4ff;
+    }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(0,229,255,0.04); }
+    .badge {
+      display:inline-block; padding:3px 10px;
+      border-radius:20px; font-size:0.75rem; font-weight:700;
+    }
+    .badge-blue { background:rgba(0,229,255,0.1); color:#00e5ff; border:1px solid rgba(0,229,255,0.2); }
+    .badge-orange { background:rgba(255,107,53,0.1); color:#ff6b35; border:1px solid rgba(255,107,53,0.2); }
+    .del-btn {
+      background:rgba(255,50,50,0.1); color:#ff5050;
+      border:1px solid rgba(255,50,50,0.2);
+      padding:5px 12px; border-radius:6px;
+      cursor:pointer; font-size:0.8rem;
+      transition:0.2s;
+    }
+    .del-btn:hover { background:rgba(255,50,50,0.25); }
+    .empty { text-align:center; padding:40px; color:#7ba8c4; }
+    .loading { text-align:center; padding:40px; color:#00e5ff; }
+    a { color:#7ba8c4; text-decoration:none; font-size:0.9rem; }
+    a:hover { color:#00e5ff; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Natarajan <span>Mobile</span> — Admin</div>
+  <a href="register.html">← Register Page</a>
+</header>
+
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-num" id="totalCount">0</div>
+    <div class="stat-label">Total Customers</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" id="todayCount">0</div>
+    <div class="stat-label">Today Registered</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <input class="search-box" type="text" id="searchBox" placeholder="🔍 Search by name or phone..." oninput="filterTable()"/>
+  <button class="btn btn-primary" onclick="loadCustomers()">🔄 Refresh</button>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#ID</th>
+        <th>பெயர்</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Address</th>
+        <th>Device</th>
+        <th>Service</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="customerTable">
+      <tr><td colspan="9" class="loading">⏳ Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+let allCustomers = [];
+
+async function loadCustomers() {
+  try {
+    const res = await fetch('http://localhost:4000/api/customers');
+    const data = await res.json();
+    allCustomers = data.data || [];
+    renderTable(allCustomers);
+    updateStats(allCustomers);
+  } catch {
+    document.getElementById('customerTable').innerHTML =
+      '<tr><td colspan="9" class="empty">❌ Server connect ஆகவில்லை! server.js run பண்ணுங்கள்.</td></tr>';
+  }
+}
+
+function renderTable(customers) {
+  const tbody = document.getElementById('customerTable');
+  if (customers.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">📭 No customers registered yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = customers.map(c => `
+    <tr>
+      <td><span class="badge badge-blue">#${c.id}</span></td>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.phone}</td>
+      <td>${c.email || '-'}</td>
+      <td>${c.address || '-'}</td>
+      <td>${c.device_model ? `<span class="badge badge-orange">${c.device_model}</span>` : '-'}</td>
+      <td>${c.service_type || '-'}</td>
+      <td>${new Date(c.registered_at).toLocaleDateString('en-IN')}</td>
+      <td><button class="del-btn" onclick="deleteCustomer(${c.id})">🗑️ Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function filterTable() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const filtered = allCustomers.filter(c =>
+    c.name.toLowerCase().includes(q) || c.phone.includes(q)
+  );
+  renderTable(filtered);
+}
+
+function updateStats(customers) {
+  document.getElementById('totalCount').textContent = customers.length;
+  const today = new Date().toDateString();
+  const todayCount = customers.filter(c =>
+    new Date(c.registered_at).toDateString() === today
+  ).length;
+  document.getElementById('todayCount').textContent = todayCount;
+}
+
+async function deleteCustomer(id) {
+  if (!confirm('இந்த customer-ஐ delete செய்யவா?')) return;
+  await fetch(`http://localhost:3000/api/customers/${id}`, { method: 'DELETE' });
+  loadCustomers();
+}
+
+loadCustomers();
+</script>
+</body>
+</html>
