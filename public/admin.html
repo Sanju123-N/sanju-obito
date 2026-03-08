@@ -148,7 +148,7 @@ let allCustomers = [];
 
 async function loadCustomers() {
   try {
-    const res = await fetch("https://sanjuobito.onrender.com/api/customers");
+    const res = await fetch('https://lieselotte-petiolular-neta.ngrok-free.dev/api/customers');
     const data = await res.json();
     allCustomers = data.data || [];
     renderTable(allCustomers);
